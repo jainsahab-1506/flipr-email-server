@@ -20,25 +20,25 @@ const domail = async (id) => {
       "mailCredentialsId"
     );
 
-    // const attachments = chaindata.messageid.attachments;
-    // var emailgroupto = "";
-    // chaindata.emailgroupid.to.forEach((email) => {
-    //   emailgroupto = emailgroupto + email + ",";
-    // });
-    // emailgroupto = emailgroupto.slice(0, -1);
+    const attachments = chaindata.messageid.attachments;
+    var emailgroupto = "";
+    chaindata.emailgroupid.to.forEach((email) => {
+      emailgroupto = emailgroupto + email + ",";
+    });
+    emailgroupto = emailgroupto.slice(0, -1);
 
-    // //Converting CC and BCC Array into singleString
-    // var emailgroupcc = "";
-    // var emailgroupbcc = "";
-    // chaindata.emailgroupid.cc.forEach((email) => {
-    //   emailgroupcc = emailgroupcc + email + ",";
-    // });
-    // emailgroupcc = emailgroupcc.slice(0, -1);
+    //Converting CC and BCC Array into singleString
+    var emailgroupcc = "";
+    var emailgroupbcc = "";
+    chaindata.emailgroupid.cc.forEach((email) => {
+      emailgroupcc = emailgroupcc + email + ",";
+    });
+    emailgroupcc = emailgroupcc.slice(0, -1);
 
-    // chaindata.emailgroupid.bcc.forEach((email) => {
-    //   emailgroupbcc = emailgroupbcc + email + ",";
-    // });
-    // emailgroupbcc = emailgroupbcc.slice(0, -1);
+    chaindata.emailgroupid.bcc.forEach((email) => {
+      emailgroupbcc = emailgroupbcc + email + ",";
+    });
+    emailgroupbcc = emailgroupbcc.slice(0, -1);
     //mime Type Object
     var mailContent = mimemessage.factory({
       contentType: "multipart/mixed",
@@ -46,9 +46,10 @@ const domail = async (id) => {
     });
 
     //addingHeaders
-    mailContent.header("From", "namujain266@gmail.com");
-    mailContent.header("To", "2019UCP1390@mnit.ac.in");
-    mailContent.header("CC", "2019UCP1388@mnit.ac.in");
+    mailContent.header("From", user.mailCredentialsId.email);
+    mailContent.header("To", emailgroupto);
+    mailContent.header("CC", emailgroupcc);
+    mailContent.header("CC", emailgroupbcc);
     mailContent.header("Subject", "Test Mail");
     // mailContent.header("BCC", emailgroupbcc);
     //textEntity
@@ -59,7 +60,7 @@ const domail = async (id) => {
     var oauthtoken = user.mailCredentialsId.access_token;
 
     mailContent.body.push(plainEntity);
-    console.log(process.env.PWD);
+    // console.log(process.env.PWD);
     attachments.forEach((file) => {
       var data = fs.readFileSync(`${process.env.PWD}/${file.path}`);
 
@@ -90,6 +91,8 @@ const domail = async (id) => {
           },
         });
       } catch (err) {
+        managers.stop(id);
+        await Chain.findOneAndUpdate({ _id: id }, { status: false });
         console.log(err.message);
       }
     } else {
@@ -108,6 +111,10 @@ const domail = async (id) => {
             "content-type": "application/x-www-form-urlencoded;charset=utf-8",
           },
         });
+        if (resp.data.error) {
+          manager.stop(id);
+          await Chain.findOneAndUpdate({ _id: id }, { status: false });
+        }
 
         await Credentials.findOneAndUpdate(
           { _id: user.mailCredentialsId._id },
@@ -132,14 +139,19 @@ const domail = async (id) => {
           });
           console.log("Done");
         } catch (err) {
-          manager.stop(id);
-          console.log(err.message);
+          managers.stop(id);
+          await Chain.findOneAndUpdate({ _id: id }, { status: false });
+          console.log(err);
         }
       } catch (err) {
+        managers.stop(id);
+        await Chain.findOneAndUpdate({ _id: id }, { status: false });
         console.log(err);
       }
     }
   } catch (error) {
+    managers.stop(id);
+    await Chain.findOneAndUpdate({ _id: id }, { status: false });
     console.log(err.message);
   }
 };
