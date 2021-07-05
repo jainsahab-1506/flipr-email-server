@@ -49,9 +49,8 @@ const domail = async (id) => {
     mailContent.header("From", user.mailCredentialsId.email);
     mailContent.header("To", emailgroupto);
     mailContent.header("CC", emailgroupcc);
-    mailContent.header("CC", emailgroupbcc);
+    mailContent.header("BCC", emailgroupbcc);
     mailContent.header("Subject", "Test Mail");
-    // mailContent.header("BCC", emailgroupbcc);
     //textEntity
 
     var plainEntity = mimemessage.factory({
@@ -91,7 +90,7 @@ const domail = async (id) => {
           },
         });
       } catch (err) {
-        managers.stop(id);
+        manager.stop(id);
         await Chain.findOneAndUpdate({ _id: id }, { status: false });
         console.log(err.message);
       }
@@ -139,18 +138,18 @@ const domail = async (id) => {
           });
           console.log("Done");
         } catch (err) {
-          managers.stop(id);
+          manager.stop(id);
           await Chain.findOneAndUpdate({ _id: id }, { status: false });
           console.log(err);
         }
       } catch (err) {
-        managers.stop(id);
+        manager.stop(id);
         await Chain.findOneAndUpdate({ _id: id }, { status: false });
         console.log(err);
       }
     }
   } catch (error) {
-    managers.stop(id);
+    manager.stop(id);
     await Chain.findOneAndUpdate({ _id: id }, { status: false });
     console.log(err.message);
   }

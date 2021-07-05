@@ -89,13 +89,30 @@ app.post("/updatecron", authorizeRequest, async function (req, res) {
     const frequency = req.body.frequency;
     const id = req.body.id;
     const status = req.body.status;
-    await manager.update(id, frequency);
-    if (status) {
-      manager.start(id);
-    } else {
-      manager.stop(id);
+    if(!manager.exists(id)){
+      const frequency = req.body.frequency;
+      const id = req.body.id;
+      const status = req.body.status;
+      await manager.add(
+        id,
+        frequency,
+        () => {
+          domail(id);
+        },
+        { start: status }
+      );
+      console.log(manager);
+      return res.status(200).json("Success:Job Created");
     }
-    return res.status(200).json("Success:Job Updated");
+    else{
+      await manager.update(id, frequency);
+      if (status) {
+        manager.start(id);
+      } else {
+        manager.stop(id);
+      }
+      return res.status(200).json("Success:Job Updated");
+    }
   } catch (err) {
     return res.status(400).json({ err: err.message });
   }
@@ -120,11 +137,10 @@ app.post(
 
       if (status) {
         manager.start(id);
-        await Chain.findAndUpdate({ _id: id }, { status: status });
       } else {
         manager.stop(id);
-        await Chain.findAndUpdate({ _id: id }, { status: status });
       }
+      await Chain.findOneAndUpdate({ _id: id }, { status: status });
       return res.status(200).json("Success:Status Updated");
     } catch (err) {
       return res.status(400).json({ err: err.message });
