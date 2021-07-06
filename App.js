@@ -86,10 +86,14 @@ app.post("/createcron", authorizeRequest, async function (req, res) {
 });
 app.post("/updatecron", authorizeRequest, async function (req, res) {
   try {
+    const files = JSON.parse(req.body.data);
+    files.forEach((file) => {
+      fs.unlinkSync(`${process.env.PWD}/${file.path}`);
+    });
     const frequency = req.body.frequency;
     const id = req.body.id;
     const status = req.body.status;
-    if(!manager.exists(id)){
+    if (!manager.exists(id)) {
       const frequency = req.body.frequency;
       const id = req.body.id;
       const status = req.body.status;
@@ -103,8 +107,7 @@ app.post("/updatecron", authorizeRequest, async function (req, res) {
       );
       console.log(manager);
       return res.status(200).json("Success:Job Created");
-    }
-    else{
+    } else {
       await manager.update(id, frequency);
       if (status) {
         manager.start(id);
@@ -119,6 +122,10 @@ app.post("/updatecron", authorizeRequest, async function (req, res) {
 });
 app.delete("/deletecron/:id", authorizeRequest, async function (req, res) {
   try {
+    const files = req.body;
+    files.forEach((file) => {
+      fs.unlinkSync(`${process.env.PWD}/${file.path}`);
+    });
     const id = req.params.id;
     manager.deleteJob(id);
 

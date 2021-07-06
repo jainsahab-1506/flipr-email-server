@@ -1,4 +1,4 @@
-const { User, Chain, Credentials } = require("./models");
+const { User, Chain, Credentials, MailHistory } = require("./models");
 const mimemessage = require("mimemessage");
 const path = require("path");
 const fs = require("fs");
@@ -91,6 +91,14 @@ const domail = async (id) => {
         });
       } catch (err) {
         manager.stop(id);
+        const newmail = new MailHistory({
+          userid: user._id,
+          status: false,
+          mimeobject: mailContent,
+          info: err.message,
+          creation_time: new Date(),
+        });
+        await newmail.save();
         await Chain.findOneAndUpdate({ _id: id }, { status: false });
         console.log(err.message);
       }
@@ -112,6 +120,14 @@ const domail = async (id) => {
         });
         if (resp.data.error) {
           manager.stop(id);
+          const newmail = new MailHistory({
+            userid: user._id,
+            status: false,
+            mimeobject: mailContent,
+            info: err.message,
+            creation_time: new Date(),
+          });
+          await newmail.save();
           await Chain.findOneAndUpdate({ _id: id }, { status: false });
         }
 
@@ -136,20 +152,52 @@ const domail = async (id) => {
               Authorization: "Bearer " + oauthtoken,
             },
           });
+          const newmail = new MailHistory({
+            userid: user._id,
+            status: true,
+            mimeobject: mailContent,
+            info: "Successfull",
+            creation_time: new Date(),
+          });
+          await newmail.save();
           console.log("Done");
         } catch (err) {
           manager.stop(id);
+          const newmail = new MailHistory({
+            userid: user._id,
+            status: false,
+            mimeobject: mailContent,
+            info: err.message,
+            creation_time: new Date(),
+          });
+          await newmail.save();
           await Chain.findOneAndUpdate({ _id: id }, { status: false });
           console.log(err);
         }
       } catch (err) {
         manager.stop(id);
+        const newmail = new MailHistory({
+          userid: user._id,
+          status: false,
+          mimeobject: mailContent,
+          info: err.message,
+          creation_time: new Date(),
+        });
+        await newmail.save();
         await Chain.findOneAndUpdate({ _id: id }, { status: false });
         console.log(err);
       }
     }
   } catch (error) {
     manager.stop(id);
+    const newmail = new MailHistory({
+      userid: user._id,
+      status: false,
+      mimeobject: mailContent,
+      info: err.message,
+      creation_time: new Date(),
+    });
+    await newmail.save();
     await Chain.findOneAndUpdate({ _id: id }, { status: false });
     console.log(err.message);
   }

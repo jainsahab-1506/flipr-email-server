@@ -96,6 +96,13 @@ const tokenSchema = new mongoose.Schema({
   userid: { type: mongoose.ObjectId, unique: true, index: true },
   token: String,
 });
+const mailhistorySchema = new mongoose.Schema({
+  userid: { type: mongoose.ObjectId, required: true },
+  status: { type: Boolean },
+  mimeobject: { type: Object },
+  info: { type: String },
+  creation_time: { type: Date },
+});
 
 module.exports.Chain = new mongoose.model("Chains", chainSchema);
 
@@ -107,3 +114,7 @@ module.exports.EmailGroup = new mongoose.model("Email Group", emailGroupSchema);
 module.exports.Messages = new mongoose.model("Messages", messageSchema);
 module.exports.Token = new mongoose.model("Token", tokenSchema);
 module.exports.User = new mongoose.model("User", userSchema);
+module.exports.MailHistory = new mongoose.model(
+  "Mail History",
+  mailhistorySchema
+);
