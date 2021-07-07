@@ -1,6 +1,6 @@
 const { User, Chain, Credentials, MailHistory } = require("./models");
 const mimemessage = require("mimemessage");
-const path = require("path");
+
 const fs = require("fs");
 const qs = require("qs");
 const mime = require("mime-types");
@@ -50,7 +50,7 @@ const domail = async (id) => {
     mailContent.header("To", emailgroupto);
     mailContent.header("CC", emailgroupcc);
     mailContent.header("BCC", emailgroupbcc);
-    mailContent.header("Subject", "Test Mail");
+    mailContent.header("Subject", chaindata.subject);
     //textEntity
 
     var plainEntity = mimemessage.factory({
@@ -89,6 +89,16 @@ const domail = async (id) => {
             Authorization: "Bearer " + oauthtoken,
           },
         });
+        const newmail = new MailHistory({
+          userid: user._id,
+          status: true,
+          mimeobject: mailContent,
+          info: "Successfull",
+          creation_time: new Date(),
+        });
+
+        console.log(newmail);
+        await newmail.save();
       } catch (err) {
         manager.stop(id);
         const newmail = new MailHistory({
@@ -159,6 +169,9 @@ const domail = async (id) => {
             info: "Successfull",
             creation_time: new Date(),
           });
+          console.log(resp);
+          console.log(newmail);
+
           await newmail.save();
           console.log("Done");
         } catch (err) {

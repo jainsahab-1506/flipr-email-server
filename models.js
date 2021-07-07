@@ -77,7 +77,7 @@ const chainSchema = new mongoose.Schema({
   },
   frequency: { type: Object, required: true },
   status: { type: Boolean },
-  cronjobname: { type: String },
+  subject: { type: String, required: true },
 });
 const userSchema = new mongoose.Schema({
   username: { type: String, unique: true },

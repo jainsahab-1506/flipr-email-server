@@ -46,8 +46,13 @@ mongoose.connect(
   }
 );
 const logic = (req, res) => {
-  console.log("Called");
-  console.log(req.files);
+  // console.log("Called");
+  // console.log(req.files);
+  const files = JSON.parse(req.body.data);
+  console.log(files);
+  files.forEach((file) => {
+    fs.unlinkSync(`${process.env.PWD}/${file.path}`);
+  });
   return res.status(200).json("Success:Upload Success");
 };
 app.use(
@@ -86,17 +91,10 @@ app.post("/createcron", authorizeRequest, async function (req, res) {
 });
 app.post("/updatecron", authorizeRequest, async function (req, res) {
   try {
-    const files = JSON.parse(req.body.data);
-    files.forEach((file) => {
-      fs.unlinkSync(`${process.env.PWD}/${file.path}`);
-    });
     const frequency = req.body.frequency;
     const id = req.body.id;
     const status = req.body.status;
     if (!manager.exists(id)) {
-      const frequency = req.body.frequency;
-      const id = req.body.id;
-      const status = req.body.status;
       await manager.add(
         id,
         frequency,
@@ -122,7 +120,8 @@ app.post("/updatecron", authorizeRequest, async function (req, res) {
 });
 app.delete("/deletecron/:id", authorizeRequest, async function (req, res) {
   try {
-    const files = req.body;
+    const files = req.body.files;
+
     files.forEach((file) => {
       fs.unlinkSync(`${process.env.PWD}/${file.path}`);
     });
@@ -141,7 +140,7 @@ app.post(
     try {
       const id = req.params.id;
       const status = req.body.status;
-
+      console.log(status);
       if (status) {
         manager.start(id);
       } else {
