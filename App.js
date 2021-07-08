@@ -48,8 +48,7 @@ mongoose.connect(
 const logic = (req, res) => {
   // console.log("Called");
   // console.log(req.files);
-  const files = JSON.parse(req.body.data);
-  console.log(files);
+  
   files.forEach((file) => {
     fs.unlinkSync(`${process.env.PWD}/${file.path}`);
   });
