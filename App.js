@@ -49,9 +49,7 @@ const logic = (req, res) => {
   // console.log("Called");
   // console.log(req.files);
   
-  files.forEach((file) => {
-    fs.unlinkSync(`${process.env.PWD}/${file.path}`);
-  });
+ 
   return res.status(200).json("Success:Upload Success");
 };
 app.use(
