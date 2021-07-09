@@ -209,7 +209,7 @@ const domail = async (id) => {
         console.log(err);
       }
     }
-  } catch (error) {
+  } catch (err) {
     manager.stop(id);
        const chainId = id;
     //finding chaindata
