@@ -189,6 +189,9 @@ const domail = async (id) => {
         }
       } catch (err) {
         manager.stop(id);
+         const user = await User.findOne({ _id: chaindata.userid }).populate(
+      "mailCredentialsId"
+    );
         const newmail = new MailHistory({
           userid: user._id,
           status: false,
@@ -203,6 +206,9 @@ const domail = async (id) => {
     }
   } catch (error) {
     manager.stop(id);
+     const user = await User.findOne({ _id: chaindata.userid }).populate(
+      "mailCredentialsId"
+    );
     const newmail = new MailHistory({
       userid: user._id,
       status: false,
