@@ -79,7 +79,7 @@ app.post("/createcron", authorizeRequest, async function (req, res) {
         domail(id);
       },
       { start: status,
-      timezone:"Asia/Delhi"
+      timezone:"Asia/Kolkata"
       }
     );
     console.log(manager);
@@ -101,7 +101,7 @@ app.post("/updatecron", authorizeRequest, async function (req, res) {
           domail(id);
         },
         { start: status,
-          timezone:"Asia/Delhi"
+          timezone:"Asia/Kolkata"
         }
       );
       console.log(manager);
