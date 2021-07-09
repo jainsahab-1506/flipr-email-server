@@ -78,7 +78,9 @@ app.post("/createcron", authorizeRequest, async function (req, res) {
       () => {
         domail(id);
       },
-      { start: status }
+      { start: status,
+      timezone:"Asia/Delhi"
+      }
     );
     console.log(manager);
     return res.status(200).json("Success:Job Created");
@@ -98,7 +100,9 @@ app.post("/updatecron", authorizeRequest, async function (req, res) {
         () => {
           domail(id);
         },
-        { start: status }
+        { start: status,
+          timezone:"Asia/Delhi"
+        }
       );
       console.log(manager);
       return res.status(200).json("Success:Job Created");
