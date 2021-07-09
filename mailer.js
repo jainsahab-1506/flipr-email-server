@@ -189,6 +189,11 @@ const domail = async (id) => {
         }
       } catch (err) {
         manager.stop(id);
+           const chainId = id;
+    //finding chaindata
+    const chaindata = await Chain.findOne({ _id: chainId })
+      .populate("messageid")
+      .populate("emailgroupid");
          const user = await User.findOne({ _id: chaindata.userid }).populate(
       "mailCredentialsId"
     );
@@ -206,6 +211,11 @@ const domail = async (id) => {
     }
   } catch (error) {
     manager.stop(id);
+       const chainId = id;
+    //finding chaindata
+    const chaindata = await Chain.findOne({ _id: chainId })
+      .populate("messageid")
+      .populate("emailgroupid");
      const user = await User.findOne({ _id: chaindata.userid }).populate(
       "mailCredentialsId"
     );
